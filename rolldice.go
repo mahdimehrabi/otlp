@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	slogmulti "github.com/samber/slog-multi"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -20,7 +21,7 @@ const name = "go.opentelemetry.io/otel/example/dice"
 var (
 	tracer  = otel.Tracer(name)
 	meter   = otel.Meter(name)
-	logger  = otelslog.NewLogger(name)
+	logger  = slog.New(slogmulti.Fanout(otelslog.NewHandler(name), slog.NewTextHandler(os.Stdout, nil)))
 	rollCnt metric.Int64Counter
 )
 
