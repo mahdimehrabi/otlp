@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
+	"go.opentelemetry.io/otel/sdk/resource"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"time"
 
 	"go.opentelemetry.io/otel"
@@ -115,8 +117,18 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 	if err != nil {
 		return nil, err
 	}
+	r, err := resource.New(
+		context.Background(),
+		resource.WithAttributes(semconv.ServiceNameKey.String("my-service")),
+		resource.WithProcessPID(),
+		resource.WithTelemetrySDK(),
+		resource.WithHost(),
+		resource.WithTelemetrySDK(),
+		resource.WithProcess(),
+	)
 
 	meterProvider := metric.NewMeterProvider(
+		metric.WithResource(r),
 		metric.WithReader(metric.NewPeriodicReader(metricExporter,
 			// Default is 1m. Set to 3s for demonstrative purposes.
 			metric.WithInterval(3*time.Second))),

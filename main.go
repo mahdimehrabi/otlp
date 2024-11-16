@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"errors"
+	"go.opentelemetry.io/contrib/instrumentation/host"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
+	"go.opentelemetry.io/otel"
 	"log"
 	"net"
 	"net/http"
@@ -33,6 +36,15 @@ func run() (err error) {
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
 	}()
+
+	err = host.Start(host.WithMeterProvider(otel.GetMeterProvider()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = runtime.Start(runtime.WithMeterProvider(otel.GetMeterProvider()))
+	if err != nil {
+		panic(err)
+	}
 
 	// Start HTTP server.
 	srv := &http.Server{
