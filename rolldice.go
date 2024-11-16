@@ -37,8 +37,8 @@ func init() {
 
 func rolldice(w http.ResponseWriter, r *http.Request) {
 	slog.SetDefault(logger)
-	slog.
-		logger.With(slog.NewTextHandler(os.Stdout, nil))
+	slog.With(slog.NewTextHandler(os.Stdout, nil))
+
 	ctx, span := tracer.Start(r.Context(), "roll")
 	defer span.End()
 

@@ -80,8 +80,14 @@ func newPropagator() propagation.TextMapPropagator {
 
 func newTraceProvider() (*trace.TracerProvider, error) {
 	traceExporter, err := otlptracegrpc.New(context.Background(),
-		otlptracegrpc.WithEndpoint("localhost:4317"),
+		otlptracegrpc.WithEndpoint("localhost:5081"),
 		otlptracegrpc.WithInsecure(),
+		otlptracegrpc.WithHeaders(
+			map[string]string{
+				"Authorization": "Basic cm9vdEBleGFtcGxlLmNvbTpDNjhVQXhzUUE1YnFpb2sz",
+				"organization":  "default",
+				"stream-name":   "default",
+			}),
 	)
 
 	if err != nil {
@@ -98,8 +104,13 @@ func newTraceProvider() (*trace.TracerProvider, error) {
 
 func newMeterProvider() (*metric.MeterProvider, error) {
 	metricExporter, err := otlpmetricgrpc.New(context.Background(),
-		otlpmetricgrpc.WithEndpoint("localhost:4317"),
+		otlpmetricgrpc.WithEndpoint("localhost:5081"),
 		otlpmetricgrpc.WithInsecure(),
+		otlpmetricgrpc.WithHeaders(map[string]string{
+			"Authorization": "Basic cm9vdEBleGFtcGxlLmNvbTpDNjhVQXhzUUE1YnFpb2sz",
+			"organization":  "default",
+			"stream-name":   "default",
+		}),
 	)
 	if err != nil {
 		return nil, err
@@ -115,7 +126,14 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 
 func newLoggerProvider() (*log.LoggerProvider, error) {
 	logExporter, err := otlploggrpc.New(context.Background(),
-		otlploggrpc.WithEndpoint("localhost:4317"),
+		otlploggrpc.WithEndpoint("localhost:5081"),
+		otlploggrpc.WithHeaders(
+			map[string]string{
+				"Authorization": "Basic cm9vdEBleGFtcGxlLmNvbTpDNjhVQXhzUUE1YnFpb2sz",
+				"organization":  "default",
+				"stream-name":   "default",
+			},
+		),
 		otlploggrpc.WithInsecure(),
 	)
 	if err != nil {
